@@ -21,6 +21,8 @@ class MockBuilder
 			$mocked = NULL;
 		}
 
+		$this->argsMatcher = $argsMatcher;
+
 		$this->mock = $this->createMock($mocked);
 		$this->addMethods($defaults);
 	}
