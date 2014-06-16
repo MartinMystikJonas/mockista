@@ -42,9 +42,9 @@ class Registry
 	 * @param array $methods
 	 * @return MockInterface
 	 */
-	public function createNamed($name, $class = NULL, array $methods = array())
+	public function createNamed($name, $class = NULL, array $methods = array(), ArgsMatcher $argsMatcher = NULL)
 	{
-		return $this->createNamedBuilder($name, $class, $methods)->getMock();
+		return $this->createNamedBuilder($name, $class, $methods, $argsMatcher)->getMock();
 	}
 
 	/**
