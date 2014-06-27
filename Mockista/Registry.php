@@ -25,55 +25,62 @@ class Registry
 
 	/**
 	 * Create mock
-	 * @param string $class mocked class
+	 * @param string $mocked mocked class or object
 	 * @param array $methods
 	 * @param ArgsMatcher $argsMatcher
 	 * @return MockInterface
 	 */
-	public function create($class = NULL, array $methods = array(), ArgsMatcher $argsMatcher = NULL)
+	public function create($mocked = NULL, array $methods = array(), ArgsMatcher $argsMatcher = NULL)
 	{
-		return $this->createBuilder($class, $methods, $argsMatcher)->getMock();
+		return $this->createBuilder($mocked, $methods, $argsMatcher)->getMock();
 	}
 
 	/**
 	 * Create mock with user defined name
 	 * @param string $name
-	 * @param string $class
+	 * @param string $mocked
 	 * @param array $methods
 	 * @return MockInterface
 	 */
-	public function createNamed($name, $class = NULL, array $methods = array(), ArgsMatcher $argsMatcher = NULL)
+	public function createNamed($name, $mocked = NULL, array $methods = array(), ArgsMatcher $argsMatcher = NULL)
 	{
-		return $this->createNamedBuilder($name, $class, $methods, $argsMatcher)->getMock();
+		return $this->createNamedBuilder($name, $mocked, $methods, $argsMatcher)->getMock();
 	}
 
 	/**
 	 * Create mock builder
-	 * @param string $class
+	 * @param string $mocked
 	 * @param array $methods
 	 * @return MockBuilder
 	 */
-	public function createBuilder($class = NULL, array $methods = array(), ArgsMatcher $argsMatcher = NULL)
+	public function createBuilder($mocked = NULL, array $methods = array(), ArgsMatcher $argsMatcher = NULL)
 	{
-		$name = $class ? "{$class}#{$this->mockId}" : "#{$this->mockId}";
+		if(is_object($mocked)) {
+			$class = get_class($mocked);
+			$name = "{$class}#{$this->mockId}";
+		} else if($mocked) {
+			$name = "{$mocked}#{$this->mockId}";
+		} else {
+			$name = "#{$this->mockId}";
+		}
 
-		return $this->createNamedBuilder($name, $class, $methods, $argsMatcher);
+		return $this->createNamedBuilder($name, $mocked, $methods, $argsMatcher);
 	}
 
 	/**
 	 * Create builder for named mock
 	 *
 	 * @param string $name user defined name
-	 * @param string $class
+	 * @param string $mocked
 	 * @param array $methods
 	 * @return MockBuilder
 	 */
-	public function createNamedBuilder($name, $class = NULL, array $methods = array(), ArgsMatcher $argsMatcher = NULL)
+	public function createNamedBuilder($name, $mocked = NULL, array $methods = array(), ArgsMatcher $argsMatcher = NULL)
 	{
 		if ($argsMatcher === NULL) {
 			$argsMatcher = $this->argsMatcher;
 		}
-		$builder = new MockBuilder($class, $methods, $argsMatcher);
+		$builder = new MockBuilder($mocked, $methods, $argsMatcher);
 		$mock = $builder->getMock();
 		if (isset($this->mocks[$name])) {
 			throw new InvalidArgumentException("Mock with name {$name} is already registered.");
